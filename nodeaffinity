@@ -1,0 +1,69 @@
+prefered.yml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ib-deployment
+  labels:
+    app: bank
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: bank
+  template:
+    metadata:
+      labels:
+        app: bank
+    spec:
+      affinity:
+       nodeAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 2
+          preference:
+           matchExpressions:
+           - key: node-name
+             operator: In
+             values:
+             - mb-node
+      containers:
+      - name: nginx
+        image: kusumareddy049/ib-image:latest
+        ports:
+        - containerPort: 80
+
+------------------------------------------------------------------------------------------------------
+
+required.yml
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ib-deployment
+  labels:
+    app: bank
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bank
+  template:
+    metadata:
+      labels:
+        app: bank
+    spec:
+      affinity:
+       nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+         nodeSelectorTerms:
+         - matchExpressions:
+           - key: node-name
+             operator: In
+             values:
+             - mb-node
+      containers:
+      - name: cont1
+        image: kusumareddy049/ib-image:latest
+        ports:
+        - containerPort: 80
